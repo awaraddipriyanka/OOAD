@@ -8,21 +8,21 @@ public class Cart {
 	boolean forSale;
 	DB_management dbObj;
 	
-	public void insert(Cart c,DB_management dbObj) throws SQLException
+	public void insert(Cart cart,DB_management dbObj) throws SQLException
 	{
 		String sql = " Insert into cart(user_id, item_id, quantity, forSale) values( "+
-					 " "+c.userId+","+
-					 " "+c.itemId+","+
-					 " "+c.quantity+","+
-					 " "+c.forSale+");";
+					 " "+cart.userId+","+
+					 " "+cart.itemId+","+
+					 " "+cart.quantity+","+
+					 " "+cart.forSale+");";
 		dbObj.insert(sql);
 	}
 	
-	public void update(Cart c,DB_management dbObj) throws SQLException
+	public void update(Cart cart,DB_management dbObj) throws SQLException
 	{
-		String sql = " update cart set quantity = "+c.quantity+
-					 " where item_id = "+c.itemId+
-					 " and user_id = "+c.userId+";";
+		String sql = " update cart set quantity = "+cart.quantity+
+					 " where item_id = "+cart.itemId+
+					 " and user_id = "+cart.userId+";";
 		dbObj.updateOrDelete(sql);
 	}
 	
