@@ -1,9 +1,13 @@
+package Controller.system;
+
+import Controller.database.DB_management;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class loginAuthorization {
 	
-	DB_management 	dbObj = new DB_management();
+	DB_management dbObj = new DB_management();
 	ResultSet 		rsResult	= null;
 	static String 	ssUserID	= "";
 	
@@ -23,13 +27,13 @@ public class loginAuthorization {
 					 "\"" +psUserID + "\"" + "and password = "+
 					 "\"" +psPassword + "\"" + ";";
 		
-		rsResult	= dbObj.Execute(sql);
+		rsResult	= dbObj.execute(sql);
 		
 		try
 		{
 			while (rsResult.next())
 			{
-				ssUserID = rsResult.getString(4);	// Column 1 - User ID
+				ssUserID = rsResult.getString(4);	// Column 1 - model.User ID
 			}
 			
 			if (ssUserID.trim () == "")

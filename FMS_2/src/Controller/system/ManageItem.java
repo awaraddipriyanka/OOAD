@@ -1,3 +1,11 @@
+package Controller.system;
+
+import Controller.database.DB_management;
+import Controller.database.DbOperationHelper;
+import model.Cart;
+import model.Constant;
+import model.Item;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -6,21 +14,16 @@ import java.util.Map;
 
 public class ManageItem
 {
-	DB_management oDBM = new DB_management ();
 	protected Map<Integer,Integer> cartTable_ItemIdToQuantity;
 	protected Map<Integer,Integer> itemTable_ItemIdToQuantity;
 	
-	ManageItem()
+	public ManageItem()
 	{
 		try {
-			oDBM.openConn();
 			cartTable_ItemIdToQuantity = new HashMap<Integer,Integer>();
 			itemTable_ItemIdToQuantity = new HashMap<Integer,Integer>();
 			populateInitialCartData();
 			populateInitialItemData();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -29,8 +32,7 @@ public class ManageItem
 	
 	public void populateInitialItemData() throws SQLException
 	{
-		Item itemObj = new Item();
-		ResultSet rs = itemObj.getItems(oDBM);
+		ResultSet rs = DbOperationHelper.getItems();
 		while(rs.next())
 		{
 			itemTable_ItemIdToQuantity.put(Integer.parseInt(rs.getObject("item_id").toString()), 
@@ -40,8 +42,7 @@ public class ManageItem
 	
 	public void populateInitialCartData() throws SQLException
 	{
-		Cart cartObj = new Cart();
-		ResultSet rs = cartObj.getCartItems(oDBM);
+		ResultSet rs = DbOperationHelper.getCartItems();
 		while(rs.next())
 		{
 			cartTable_ItemIdToQuantity.put(Integer.parseInt(rs.getObject("item_id").toString()), 
@@ -103,7 +104,7 @@ public class ManageItem
 			}
 		}
 		try {
-			rs = oDBM.Execute(sql);
+			rs = DbOperationHelper.execute(sql);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -116,21 +117,12 @@ public class ManageItem
 		int userId=1;
 		for(Map.Entry<Integer, Integer> entry : itemIdQuantity.entrySet())
 		{
-			Cart cartobj = new Cart();
-			cartobj.itemId = entry.getKey();
-			cartobj.userId = userId;
-			cartobj.quantity = entry.getValue();
-			cartobj.forSale = (forSale == Constant.BUY? true : false);
-			if(cartTable_ItemIdToQuantity.containsKey(entry.getKey()))
-			{
-				if((Integer)(cartTable_ItemIdToQuantity.get(entry.getKey())) != cartobj.quantity)
-				{
-					cartobj.update(cartobj, oDBM);
-				}
-			}
-			else
-			{
-				cartobj.insert(cartobj, oDBM);
+			Cart cart = new Cart(entry.getKey(), userId, entry.getValue(), forSale == Constant.BUY);
+			if(cartTable_ItemIdToQuantity.containsKey(entry.getKey())
+					&& (cartTable_ItemIdToQuantity.get(entry.getKey())) != cart.getQuantity()) {
+					DbOperationHelper.update(cart);
+			} else {
+				DbOperationHelper.insert(cart);
 			}
 		}
 	}
@@ -138,38 +130,20 @@ public class ManageItem
 	public void removeItemsFromCart(List<Integer> listItemId) throws SQLException
 	{
 		int userId = 1;
-		for(int itemId : listItemId )
-		{
-			Cart cartobj = new Cart();
-			cartobj.itemId = itemId;
-			cartobj.userId = userId;
-			cartobj.delete(cartobj, oDBM);
-		}	
+		for(int itemId : listItemId ) {
+			DbOperationHelper.deleteCartObject(itemId, userId);
+		}
 	}
 	
 	public void updateItemsAfterCheckout(Map<Integer,Integer> checkoutMap) throws SQLException
 	{
-		for(Map.Entry<Integer, Integer> entry : checkoutMap.entrySet())
-		{
-			Item item = new Item();
-			item.updateQuantity(entry.getKey(),entry.getValue(), oDBM);
-		}	
-	}
-	
-	public void addItem(Item item)
-	{
-		item.addItem(item, oDBM);
+		for(Map.Entry<Integer, Integer> entry : checkoutMap.entrySet()) {
+			DbOperationHelper.updateItemQuantity(entry.getKey(),entry.getValue());
+		}
 	}
 	
 	public void addItemsToCheckoutTable(Map<Integer,Integer> checkoutMap)
 	{
 		
-	}
-	
-	public ResultSet getCartItems() throws SQLException
-	{
-		Cart cartObj = new Cart();
-		ResultSet rs = cartObj.getCartItems(oDBM);
-		return rs;
 	}
 }

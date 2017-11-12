@@ -1,3 +1,4 @@
+package view;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -14,7 +15,13 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import Controller.database.DB_management;
+import Controller.database.DbOperationHelper;
+import Controller.system.ManageItem;
+import Controller.system.loginAuthorization;
 import net.proteanit.sql.DbUtils;
+import model.Constant;
+import model.Item;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -28,13 +35,12 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-class FMS_Layout extends JFrame
+public class FMS_Layout extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -86,7 +92,7 @@ class FMS_Layout extends JFrame
 		
 	}
 	
-	protected void set_main_layout (String pTitle) throws SQLException
+	public void set_main_layout (String pTitle) throws SQLException
 	{
 		frame = new JFrame (pTitle);
 		manageItemObj = new ManageItem();
@@ -98,14 +104,14 @@ class FMS_Layout extends JFrame
 		tabbedPane = (new JTabbedPane (JTabbedPane.TOP));
 		
 		// Login related artifacts - START
-		loginAuthObj	= new loginAuthorization ();
+		loginAuthObj	= new loginAuthorization();
 		tabbedPane.add ("Login", makeLoginPanel ("Login"));
 		// Login related artifacts - END
 				
 		tabbedPane.add ("Sell", makeSellPanel ("Sell"));
 		tabbedPane.add ("Buy", makeBuyPanel ("Buy"));
 		tabbedPane.add ("Rent", makeRentPanel ("Rent"));
-		tabbedPane.add ("Cart", makeCartPanel ("Cart"));
+		tabbedPane.add ("model.Cart", makeCartPanel ("model.Cart"));
 				
 		// Login related artifacts - START
 		// Disable the Tabs by default. Enabled after successful login
@@ -113,20 +119,20 @@ class FMS_Layout extends JFrame
 		tabbedPane.setEnabledAt (tabbedPane.getTabCount() - 4, false);	// Sell Tab
 		tabbedPane.setEnabledAt (tabbedPane.getTabCount() - 3, false);	// Buy Tab
 		tabbedPane.setEnabledAt (tabbedPane.getTabCount() - 2, false);	// Rent Tab
-		tabbedPane.setEnabledAt (tabbedPane.getTabCount() - 1, false);	// Cart Tab
+		tabbedPane.setEnabledAt (tabbedPane.getTabCount() - 1, false);	// model.Cart Tab
 			
 		// Add action listener for search button
 		bSearchBuy.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				populateBuyGrid(manageItemObj.displaySearch(tfSearchBuy.getText(),Constant.BUY));
+				populateBuyGrid(manageItemObj.displaySearch(tfSearchBuy.getText(), Constant.BUY));
 			}
 		});
 		
 		bSearchRent.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				populateRentGrid(manageItemObj.displaySearch(tfSearchRent.getText(),Constant.RENT));
+				populateRentGrid(manageItemObj.displaySearch(tfSearchRent.getText(), Constant.RENT));
 			}
 		});
 		
@@ -172,10 +178,10 @@ class FMS_Layout extends JFrame
 			}
 		});
 		
-		populateBuyGrid(manageItemObj.displaySearch(tfSearchBuy.getText(),Constant.BUY));
-		populateRentGrid(manageItemObj.displaySearch(tfSearchBuy.getText(),Constant.RENT));
-		populateitemIdQuantityMap(manageItemObj.getCartItems());
-		populateitemIdQuantityMap(manageItemObj.getCartItems());
+		populateBuyGrid(manageItemObj.displaySearch(tfSearchBuy.getText(), Constant.BUY));
+		populateRentGrid(manageItemObj.displaySearch(tfSearchBuy.getText(), Constant.RENT));
+		populateitemIdQuantityMap(DbOperationHelper.getCartItems());
+		populateitemIdQuantityMap(DbOperationHelper.getCartItems());
 		updateQuantityForCartItems();
 		populateCartGrid();
 		frame.getContentPane().add (tabbedPane);
@@ -225,14 +231,14 @@ class FMS_Layout extends JFrame
 					bFlag = loginAuthObj.loginValidation (tfLoginUserName.getText(),
 															String.valueOf (tfLoginPassword.getPassword()));
 					
-					System.out.println("User Validated = " + bFlag);
+					System.out.println("model.User Validated = " + bFlag);
 					
 					if (bFlag == true)
 					{
 						tabbedPane.setEnabledAt (tabbedPane.getTabCount() - 4, true);	// Sell Tab
 						tabbedPane.setEnabledAt (tabbedPane.getTabCount() - 3, true);	// Buy Tab
 						tabbedPane.setEnabledAt (tabbedPane.getTabCount() - 2, true);	// Rent Tab
-						tabbedPane.setEnabledAt (tabbedPane.getTabCount() - 1, true);	// Cart Tab
+						tabbedPane.setEnabledAt (tabbedPane.getTabCount() - 1, true);	// model.Cart Tab
 						tabbedPane.setEnabledAt (0, false);	// Disable login Tab
 					}
 					else
@@ -475,7 +481,7 @@ class FMS_Layout extends JFrame
 		panelSearch.add (tfSearchBuy);
 		panelSearch.add (bSearchBuy);
 		
-		// Table View Panel
+		// Table view Panel
 		panelTable = new JPanel ();
 		panelTable.setLayout (new GridLayout ());
 		
@@ -496,10 +502,10 @@ class FMS_Layout extends JFrame
 		tableForSearchBuy.setVisible (false);
 		scrollPaneForSearchBuy.setVisible (false);
 		
-		// Add To Cart View Panel - Part of Buy Operations
+		// Add To model.Cart view Panel - Part of Buy Operations
 		panelBuyOperations	= new JPanel ();
 		panelBuyOperations.setLayout (new FlowLayout ());
-		bAddToCartBuy = (new JButton("Add To Cart"));
+		bAddToCartBuy = (new JButton("Add To model.Cart"));
 		bAddToCartBuy.setVisible(false);
 		panelBuyOperations.add (bAddToCartBuy);
 		
@@ -531,7 +537,7 @@ class FMS_Layout extends JFrame
 		panelSearchRent.add (tfSearchRent);
 		panelSearchRent.add (bSearchRent);
 		
-		// Table View Panel
+		// Table view Panel
 		panelTableRent		= new JPanel ();
 		panelTableRent.setLayout (new GridLayout ());
 		
@@ -552,10 +558,10 @@ class FMS_Layout extends JFrame
 		tableForSearchRent.setVisible (false);
 		scrollPaneForSearchRent.setVisible (false);
 		
-		// Add To Cart View Panel - Part of Rent Operations
+		// Add To model.Cart view Panel - Part of Rent Operations
 		panelRentOperationsRent	= new JPanel ();
 		panelRentOperationsRent.setLayout (new FlowLayout ());
-		bAddToCartRent = (new JButton("Add To Cart"));
+		bAddToCartRent = (new JButton("Add To model.Cart"));
 		bAddToCartRent.setVisible(false);
 		panelRentOperationsRent.add (bAddToCartRent);
 		
@@ -571,11 +577,11 @@ class FMS_Layout extends JFrame
 	{
 		JPanel	panel	= new JPanel ();
 		panel.setLayout(null);
-		JLabel title = new JLabel("Enter Details of Item to be Sold/Rented");
+		JLabel title = new JLabel("Enter Details of model.Item to be Sold/Rented");
 		title.setFont(new Font("Chalkboard", 1, 28));
 		title.setBounds(400, -30,800,100);
 		
-		JLabel itemName  = new JLabel("Enter Item Name:");
+		JLabel itemName  = new JLabel("Enter model.Item Name:");
 		itemName.setBounds(10, 50, 300, 30);
 		JLabel itemDesc = new JLabel("Enter Desciption:");
 		itemDesc.setBounds(10, 100, 300, 30);
@@ -677,14 +683,14 @@ class FMS_Layout extends JFrame
 				itemobj.forSale = sale.isSelected();
 				itemobj.forRent = rent.isSelected();
 				//itemobj.rentStartDate = new SimpleDateFormat("yyyy-MM-dd").format();
-				manageItemObj.addItem(itemobj);
+				DbOperationHelper.addItem(itemobj);
 			}
 		});
 		
 		return panel;
 	}
 	
-	// Function to set the layout of the window - Cart
+	// Function to set the layout of the window - model.Cart
 	private  JPanel makeCartPanel (String pID)
 	{
 		JPanel		panelMain;
@@ -695,7 +701,7 @@ class FMS_Layout extends JFrame
 		panelMain.setLayout (new GridLayout (6,1));
 		
 		// Add the elements here
-		// Table View Panel
+		// Table view Panel
 		panelTableCart = new JPanel ();
 		panelTableCart.setLayout (new GridLayout());
 		
@@ -718,10 +724,10 @@ class FMS_Layout extends JFrame
 		
 		panelCartOperations	= new JPanel ();
 		panelCartOperations.setLayout (new FlowLayout());
-		bCheckout =  (new JButton ("Checkout"));
+		bCheckout =  (new JButton ("model.Checkout"));
 		bCheckout.setVisible (true);
 		panelCartOperations.add (bCheckout);
-		bremoveFromCart = new JButton("Remove Items from Cart");
+		bremoveFromCart = new JButton("Remove Items from model.Cart");
 		bremoveFromCart.setVisible(true);
 		panelCartOperations.add(bremoveFromCart);
 		
@@ -738,8 +744,8 @@ class FMS_Layout extends JFrame
 					manageItemObj.removeItemsFromCart(listItemIdToCheckout);
 					manageItemObj.addItemsToCheckoutTable(itemIdQuantityUpdateAfterCheckout);
 					populateCartGrid();
-					populateBuyGrid(manageItemObj.displaySearch("",Constant.BUY));
-					populateRentGrid(manageItemObj.displaySearch("",Constant.RENT));
+					populateBuyGrid(manageItemObj.displaySearch("", Constant.BUY));
+					populateRentGrid(manageItemObj.displaySearch("", Constant.RENT));
 				} 
 				catch (SQLException e2) 
 				{

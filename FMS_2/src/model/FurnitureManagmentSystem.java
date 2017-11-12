@@ -1,3 +1,7 @@
+package model;
+
+import Controller.database.DB_management;
+import view.FMS_Layout;
 
 public class FurnitureManagmentSystem {
 	public static void main(String[] args) {
