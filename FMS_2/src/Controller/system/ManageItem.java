@@ -1,10 +1,8 @@
 package Controller.system;
 
-import Controller.database.DB_management;
 import Controller.database.DbOperationHelper;
 import model.Cart;
-import model.Constant;
-import model.Item;
+import model.util.Constant;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,8 +12,8 @@ import java.util.Map;
 
 public class ManageItem
 {
-	protected Map<Integer,Integer> cartTable_ItemIdToQuantity;
-	protected Map<Integer,Integer> itemTable_ItemIdToQuantity;
+	private Map<Integer,Integer> cartTable_ItemIdToQuantity;
+	private Map<Integer,Integer> itemTable_ItemIdToQuantity;
 	
 	public ManageItem()
 	{
@@ -30,7 +28,7 @@ public class ManageItem
 		}
 	}
 	
-	public void populateInitialItemData() throws SQLException
+	private void populateInitialItemData() throws SQLException
 	{
 		ResultSet rs = DbOperationHelper.getItems();
 		while(rs.next())
@@ -40,7 +38,7 @@ public class ManageItem
 		}
 	}
 	
-	public void populateInitialCartData() throws SQLException
+	private void populateInitialCartData() throws SQLException
 	{
 		ResultSet rs = DbOperationHelper.getCartItems();
 		while(rs.next())

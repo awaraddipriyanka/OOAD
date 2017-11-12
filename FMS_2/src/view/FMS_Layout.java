@@ -20,7 +20,7 @@ import Controller.database.DbOperationHelper;
 import Controller.system.ManageItem;
 import Controller.system.loginAuthorization;
 import net.proteanit.sql.DbUtils;
-import model.Constant;
+import model.util.Constant;
 import model.Item;
 
 import java.awt.Dimension;
@@ -44,38 +44,38 @@ public class FMS_Layout extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 	
-	protected	JTabbedPane	tabbedPane;
-	protected	int	iScreenWidth;
-	protected	int	iScreenHeight;
-	protected	Dimension screenSize;
-	protected	JTable tableForSearchBuy;
-	protected	JTable tableForSearchRent;
-	protected 	JScrollPane	scrollPaneForSearchBuy;
-	protected 	JScrollPane	scrollPaneForSearchRent;
-	protected	JTextField	tfSearchBuy;
-	protected	JTextField	tfSearchRent;
-	protected 	JButton	bSearchBuy;
-	protected 	JButton	bSearchRent;
-	protected 	JButton	bAddToCartBuy;
-	protected 	JButton	bAddToCartRent;
-	protected	JButton	bCart;
-	protected	JButton	bCheckout;
-	protected	JButton	bremoveFromCart;
-	protected	JTable	tableForCart;
-	protected 	JScrollPane	scrollPaneForCart;
+	private	JTabbedPane	tabbedPane;
+	private	int	iScreenWidth;
+	private	int	iScreenHeight;
+	private	Dimension screenSize;
+	private	JTable tableForSearchBuy;
+	private	JTable tableForSearchRent;
+	private JScrollPane	scrollPaneForSearchBuy;
+	private JScrollPane	scrollPaneForSearchRent;
+	private	JTextField	tfSearchBuy;
+	private	JTextField	tfSearchRent;
+	private JButton	bSearchBuy;
+	private JButton	bSearchRent;
+	private JButton	bAddToCartBuy;
+	private JButton	bAddToCartRent;
+	private	JButton	bCart;
+	private	JButton	bCheckout;
+	private	JButton	bremoveFromCart;
+	private	JTable	tableForCart;
+	private JScrollPane	scrollPaneForCart;
 	// Login related artifacts - START
 	
 	private loginAuthorization loginAuthObj;
 		
-	private		boolean	bFlag;
-	JFrame	frame;
+	private	boolean	bFlag;
+	private JFrame	frame;
 	// Login related artifacts - END
 	private ManageItem manageItemObj  ;
-	protected Map<Integer,Integer> itemIdQuantityForBuy;
-	protected Map<Integer,Integer> itemIdQuantityForRent;
-	protected Map<Integer,Integer> itemIdQuantityUpdateAfterCheckout;
-	protected List<Integer> listItemIdToRemove;
-	protected List<Integer> listItemIdToCheckout;
+	private Map<Integer,Integer> itemIdQuantityForBuy;
+	private Map<Integer,Integer> itemIdQuantityForRent;
+	private Map<Integer,Integer> itemIdQuantityUpdateAfterCheckout;
+	private List<Integer> listItemIdToRemove;
+	private List<Integer> listItemIdToCheckout;
 	public DB_management dbObj = null;
 	
 	public FMS_Layout (DB_management oDBM)

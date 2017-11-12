@@ -1,4 +1,4 @@
-package model;
+package model.util;
 
 public class Constant {
 	public final static int ITEM_ID_INDEX=0;

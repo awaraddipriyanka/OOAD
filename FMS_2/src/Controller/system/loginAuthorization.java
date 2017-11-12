@@ -1,24 +1,14 @@
 package Controller.system;
 
-import Controller.database.DB_management;
+import Controller.database.DbOperationHelper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class loginAuthorization {
-	
-	DB_management dbObj = new DB_management();
-	ResultSet 		rsResult	= null;
-	static String 	ssUserID	= "";
-	
+	private String ssUserID = "";
+
 	public loginAuthorization() {
-		// TODO Auto-generated constructor stub
-		try {
-			dbObj.openConn();
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public boolean loginValidation (String psUserID, String psPassword) throws SQLException
@@ -27,8 +17,8 @@ public class loginAuthorization {
 					 "\"" +psUserID + "\"" + "and password = "+
 					 "\"" +psPassword + "\"" + ";";
 		
-		rsResult	= dbObj.execute(sql);
-		
+		ResultSet rsResult = DbOperationHelper.execute(sql);
+
 		try
 		{
 			while (rsResult.next())
@@ -36,7 +26,7 @@ public class loginAuthorization {
 				ssUserID = rsResult.getString(4);	// Column 1 - model.User ID
 			}
 			
-			if (ssUserID.trim () == "")
+			if (ssUserID.trim ().equals(""))
 			{
 				ssUserID	= "";
 			}
@@ -50,14 +40,7 @@ public class loginAuthorization {
 		
 		ssUserID = ssUserID.trim ();
 		
-		if (ssUserID != "")
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return !ssUserID.equals("");
 	}
 	
 	public String getUserId()
